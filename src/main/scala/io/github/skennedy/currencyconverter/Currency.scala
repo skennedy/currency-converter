@@ -15,7 +15,5 @@ object Currency {
   implicit val decoder: Decoder[Currency] = Decoder.decodeString.emap(parse(_).toRight("Invalid currency code"))
 
   implicit val keyEncoder: KeyEncoder[Currency] = KeyEncoder.encodeKeyString.contramap(_.code)
-  implicit val keyDecoder: KeyDecoder[Currency] = new KeyDecoder[Currency] {
-    override def apply(key: String): Option[Currency] = parse(key)
-  }
+  implicit val keyDecoder: KeyDecoder[Currency] = (key: String) => parse(key)
 }
