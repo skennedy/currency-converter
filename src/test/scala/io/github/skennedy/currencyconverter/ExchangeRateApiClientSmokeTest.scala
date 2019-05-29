@@ -6,7 +6,11 @@ import org.http4s.client.blaze.BlazeClientBuilder
 
 import scala.concurrent.ExecutionContext.global
 
-object ExchangeRateServiceSmokeTest extends IOApp {
+/**
+  * A smoke test written to initially explore the API.
+  * Implemented as a main method so it doesn't run as a unit test (because it hits real external API).
+  */
+object ExchangeRateApiClientSmokeTest extends IOApp {
 
   def run(args: List[String]) = {
     BlazeClientBuilder[IO](global).resource.use(
@@ -21,8 +25,8 @@ object ExchangeRateServiceSmokeTest extends IOApp {
     )
   }
 
-  private[this] def service(client: Client[IO]): ExchangeRateService[IO] = {
-    ExchangeRateService.impl(client)
+  private[this] def service(client: Client[IO]): ExchangeRateApiClient[IO] = {
+    ExchangeRateApiClient.impl(client)
   }
 
   private[this] def serviceReturnsRates(client: Client[IO], base: Currency) = {
