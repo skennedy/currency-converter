@@ -8,6 +8,10 @@ import org.http4s.implicits._
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.server.middleware.Logger
 import fs2.Stream
+import scalacache._
+import scalacache.guava._
+import scalacache.CatsEffect.modes._
+
 import scala.concurrent.ExecutionContext.global
 
 object CurrencyConverterServer {
@@ -15,7 +19,9 @@ object CurrencyConverterServer {
   def stream[F[_]: ConcurrentEffect](implicit T: Timer[F], C: ContextShift[F]): Stream[F, Nothing] = {
     for {
       client <- BlazeClientBuilder[F](global).stream
-      exchangeRateApiClient = ExchangeRateApiClient.impl[F](client)
+
+      guavaCache            = GuavaCache[ExchangeRateApiClient.ExchangeRates]
+      exchangeRateApiClient = ExchangeRateApiClient.cachingImpl[F](client, guavaCache)
       exchangeRateService   = ExchangeRateService.impl[F](exchangeRateApiClient)
       currencyConverter     = CurrencyConverterService.impl[F](exchangeRateService)
 

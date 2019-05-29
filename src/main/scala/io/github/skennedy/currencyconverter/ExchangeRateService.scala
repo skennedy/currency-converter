@@ -17,4 +17,5 @@ object ExchangeRateService {
         rate <- liftFromOption[F](ra.rates.get(to), ApiError.UnsupportedCurrency(to))
       } yield rate
   }
+
 }
